@@ -1,2 +1,2 @@
 # go-walkthrough
-go basic walkthrough
+go walkthrough
