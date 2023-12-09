@@ -56,7 +56,7 @@ The zero value of a channel is nil.
 fmt.Println("zero value of channel a:", a)
 ```
 
-# Declare a Channel with 1) make
+# Declare a Channel with `make`
 
 With the short hand declaration
 
@@ -93,6 +93,7 @@ read from a channel, the read is blocked until some Goroutine writes data to
 that channel.
 
 +++
+
 # Unidirectional Channels
 
 the type for a send only channel is `chan<- int`
@@ -113,7 +114,8 @@ fmt.Printf("Type of the channel: %T\n", ch2)
  only channel but not the vice versa.
 
 +++
-# Channel close: ok value
+
+# Channel close: `ok` value
 
 Receivers can use an additional variable `v, ok := <- ch` while receiving data
 from the channel to check whether the channel has been closed. 
@@ -122,8 +124,7 @@ If `ok` is false it means that we are reading from a closed channel. The value
 read from a closed channel will be the zero value of the channel's type:
 
 ```{code-cell}
-ch3 := make(chan int)
-
+ch3 := make(chan int) 
 func producer(ch chan int) {
     for i := 0; i < 10; i++ {
         ch <- i
@@ -142,10 +143,10 @@ for {
 }
 ```
 
-# Channel close: for range loop
+# Channel close: `for range` loop
 
-The for range form of the for loop can be used to receive values from a channel
-until it is closed. 
+You can iterate a channel to receive values from it:
+until it is closed.
 
 ```{code-cell}
 ch4 := make(chan int)
@@ -154,8 +155,34 @@ go producer(ch4)
 for v := range ch4 {
     fmt.Println("for range: Received in ok value", v)
 }
+```
+
+ Only the sender should close a channel, never the receiver. 
+ Sending on a closed channel will cause a panic.
+
+# Buffered Channel
+
+Channels can be buffered. Provide the buffer length as the second argument to
+make to initialize a buffered channel:
 
 ```
+ch := make(chan int, 100)
+```
+
+# Deadlock
+
+Sends to a buffered channel block only when the buffer is full
+
+```{code-cell}
+ch := make(chan string, 2)
+ch <- "naveen"
+ch <- "paul"
+ch <- "steve"
+fmt.Println(<-ch)
+fmt.Println(<-ch)
+```
+
+Receives block when the buffer is empty.
 
 # Pattern: completion (done) channel
 
